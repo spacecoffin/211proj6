@@ -7,6 +7,7 @@
 #include <stdio.h>                      // for perror()
 #include <errno.h>                      // for errno type
 #include <sys/wait.h>                   // for WAIT_ANY
+#include <stdlib.h>                     // to avoid "explicit decl. of exit"
 
 /* A process is a single process.  */
 typedef struct process

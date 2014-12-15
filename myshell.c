@@ -1,5 +1,5 @@
 //
-//  main.c
+//  myshell.c
 //  CS 211 - Fall 14
 //  Reed Rosenberg
 //
@@ -10,6 +10,7 @@
 #include <unistd.h>     // per Creating a Process slide from Lec 11
 
 int cmdtok(void);       // placeholder for parsed command line tokens
+// static char line[1024]; // for shellParse method of read using fgets
 
 int main(void)
 {
@@ -25,6 +26,12 @@ int main(void)
                 // fflush(NULL);        // per shellParse example
                 
                 // 2. Read the command line (e.g, “ls -a -l”).
+                
+                /*
+                 * The user should be able to exit your shell program by either
+                 * typing “exit” or “logout”.
+                 */
+                
                 /* if (!fgets(line, 1024, stdin)) {
                         return 0;
                 } */
@@ -35,6 +42,13 @@ int main(void)
                 
                 // 3. Parse the command line into tokens consisting of the
                 // executable file name (“ls”) and its arguments (“-a” & “-l”).
+                
+                /*
+                 * When parsing the command line, store the tokens in an
+                 * argument vector, say argvec[], which is an array of pointers
+                 * to strings.
+                 */
+                
                 token = strtok(line, delim);
                 while (token != NULL) {
                         rv = cmdtok();
@@ -43,17 +57,20 @@ int main(void)
                         }
                         token = strtok(line, delim);
                 }
+                // Make sure to terminate the array of pointers by a NULL ptr!
                 
         }
         free(line);
         
-        
-        
-        
-        
-        
 
         // 4. Fork a child process, which executes the command.
+        /*
+         * After parsing the command, fork a child process that will then 
+         * perform an execvp() to execute the command.
+         * Pass the argument vector that you built as an argument to function
+         * execvp().
+         */
+        
         // 5. Wait for the child to terminate.
         return 0;
 }
