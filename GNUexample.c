@@ -1,5 +1,13 @@
 // 27.6.1 Data Structures for the Shell
 
+#include <sys/types.h>
+#include <termios.h>
+#include <unistd.h>
+#include <signal.h>                     // for SIG____
+#include <stdio.h>                      // for perror()
+#include <errno.h>                      // for errno type
+#include <sys/wait.h>                   // for WAIT_ANY
+
 /* A process is a single process.  */
 typedef struct process
 {
@@ -61,13 +69,16 @@ job_is_completed (job *j)
         return 1;
 }
 
+// Function prototypes to avoid errors/warnings below.
+
+void put_job_in_foreground (job *j, int cont);
+void put_job_in_background (job *j, int cont);
+void wait_for_job (job *j);
+void format_job_info (job *j, const char *status);
+
 // 27.6.2 Initializing the Shell
 
 /* Keep track of attributes of the shell. */
-
-#include <sys/types.h>
-#include <termios.h>
-#include <unistd.h>
 
 pid_t shell_pgid;
 struct termios shell_tmodes;
@@ -402,7 +413,7 @@ do_job_notification (void)
 void
 mark_job_as_running (job *j)
 {
-        Process *p;
+        process *p;
         
         for (p = j->first_process; p; p = p->next)
                 p->stopped = 0;
