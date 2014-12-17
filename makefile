@@ -1,9 +1,19 @@
 # Makefile for myshell program (Reed Rosenberg)
+# invoked with "make -f myshell"
+
+CC = gcc
+CCFLAGS = -Wall -g
+
 myshell: myshell.o forkfuncs.o
-    gcc –Wall –g –o myshell myshell.o forkfuncs.o
+    $(CC) $(CFLAGS) –o myshell myshell.o forkfuncs.o
 
 myshell.o: myshell.c forkfuncs.h
-    gcc –Wall –g –c myshell.c
+    $(CC) $(CFLAGS) –c myshell.c
 
 forkfuncs.o: forkfuncs.c forkfuncs.h
-    gcc –Wall –g –c forkfuncs.c
+    $(CC) $(CFLAGS) –c forkfuncs.c
+
+# Remove all .o files
+# invoked with "clean" as target ("make clean")
+clean:
+    rm –f *.o

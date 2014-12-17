@@ -10,7 +10,7 @@
 
 // Forks a child process which will execute the commands entered into the command prompt and stored with its arguments in the global argument vector "argvec[]"
 
-void forkchild();
+void forkchild(void);
 
 //--------------------------------------------------------------------
 
