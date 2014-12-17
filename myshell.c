@@ -7,6 +7,9 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 /* Global variables */
 char *line;			// ptr to string of chars that will store read cmd line.
@@ -18,6 +21,8 @@ char *argvec[];			// argvec is a 1D array of pointers to strings
 void printprompt();
 int readline();
 int parseline();
+int forkchild();
+void execchild(void);
 
 int main(int argc, char **argv) {
 	while (1) {
@@ -62,8 +67,6 @@ int parseline() {
 	char *exitcmd = "exit";
 	char *logoutcmd = "logout";
 	
-	
-	
 	if ((linecp = strdup(line)) != NULL) {
 		token = strtok(linecp, delim);	// extract next token from line
 		if ((strcmp(token, exitcmd) == 0) || (strcmp(token, logoutcmd) == 0)) {
@@ -76,8 +79,38 @@ int parseline() {
 			i++;
 			token = strtok(NULL, delim);	// extract next token
 		}
+		//argvec[i] = NULL;
 		return 0;
 	} else {
 		return 1;
 	}
+}
+
+int forkchild() {
+	pid_t pid;	/* process ID */
+	
+	switch (pid = fork()) {
+		case 0:		/* child process */
+			printf("I am the child process with pid %d\n", getpid());
+			execchild();
+			break;
+			
+		default:	/* parent process */
+			printf("I am the parent process with pid %d\n", getpid());
+			sleep(5);	/* sleep for 5 seconds */
+			printf("Parent process exits\n");
+			break;
+		case -1:	/* something went wrong */
+			perror("fork failed");
+			exit(EXIT_FAILURE);
+	}
+	exit(EXIT_SUCCESS);
+	
+}
+
+void execchild(void) {
+	printf("Child process runs \"%s\"\n", argvec[0]);
+	execvp(argvec[0], argvec);
+	perror("execvp failed");	/* if we get here, execvp failed */
+	exit(EXIT_FAILURE);
 }
