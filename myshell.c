@@ -45,7 +45,7 @@ void printprompt() {
 }
 
 int readline() {
-	int bytesread = getline(&line, &length, stdin);	//test
+	ssize_t bytesread = getline(&line, &length, stdin);	//test
 	
 	switch (bytesread) {
 		case -1:		// geline read no bytes (error)

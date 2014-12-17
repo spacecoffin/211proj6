@@ -2,16 +2,16 @@
 # invoked with "make myshell"
 
 CC = gcc
-CFLAGS = -Wall -g
+CFLAGS = -std=gnu89 -g -Wall -Werror
 
 myshell: myshell.o forkfuncs.o
-	$(CC) $(CFLAGS) –o myshell myshell.o forkfuncs.o
-
-myshell.o: myshell.c forkfuncs.h
-	$(CC) $(CFLAGS) –c myshell.c
+	$(CC) –o myshell myshell.o forkfuncs.o
 
 forkfuncs.o: forkfuncs.c forkfuncs.h
 	$(CC) $(CFLAGS) –c forkfuncs.c
+
+myshell.o: myshell.c forkfuncs.h
+	$(CC) $(CFLAGS) –c myshell.c
 
 # Remove all .o files
 # invoked with "clean" as target ("make clean")
