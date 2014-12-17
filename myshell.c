@@ -21,8 +21,9 @@ char *argvec[];			// argvec is a 1D array of pointers to strings
 void printprompt();
 int readline();
 int parseline();
-int forkchild();
+void forkchild();
 void execchild(void);
+void parent(pid_t pid);
 
 int main(int argc, char **argv) {
 	while (1) {
@@ -36,6 +37,7 @@ int main(int argc, char **argv) {
 		if (parseline()) {
 			break;
 		}
+		forkchild();
 		
 		
 	}
@@ -86,7 +88,7 @@ int parseline() {
 	}
 }
 
-int forkchild() {
+void forkchild() {
 	pid_t pid;	/* process ID */
 	
 	switch (pid = fork()) {
@@ -96,8 +98,7 @@ int forkchild() {
 			break;
 			
 		default:	/* parent process */
-			printf("I am the parent process with pid %d\n", getpid());
-			sleep(5);	/* sleep for 5 seconds */
+			parent(pid);
 			printf("Parent process exits\n");
 			break;
 		case -1:	/* something went wrong */
@@ -109,8 +110,29 @@ int forkchild() {
 }
 
 void execchild(void) {
+	printf("I am the child process with pid %d, my parent's pid is %d\n", getpid(), getppid());
 	printf("Child process runs \"%s\"\n", argvec[0]);
 	execvp(argvec[0], argvec);
 	perror("execvp failed");	/* if we get here, execvp failed */
 	exit(EXIT_FAILURE);
+}
+
+void parent(pid_t child_pid) {
+	pid_t got_pid;
+	int status;
+	
+	printf("I am the parent process with pid %d, waiting for child process with pid %d\n", getpid(), child_pid);
+	while ((got_pid = wait(&status))) {   /* go to sleep until something happens */
+		/* wait() woke up process */
+		if (got_pid == child_pid)
+			break;	/* this is what we were looking for */
+		if (got_pid == -1) {
+			/* wait() returned for some other reason other than a child terminating */
+			perror("wait returned for some other reason");
+			return;
+		}
+	}
+	if (WIFEXITED(status))	/* child process exited normally */
+		printf("Child process exited with value %d\n", WEXITSTATUS(status));
+	
 }
