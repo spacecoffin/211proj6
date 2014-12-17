@@ -5,6 +5,7 @@
 //  Implementation of fork functions for use in myshell.c.
 //
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/wait.h>
@@ -27,7 +28,6 @@ void forkchild() {
 			exit(EXIT_FAILURE);
 	}
 	exit(EXIT_SUCCESS);
-	
 }
 
 void execchild(void) {
